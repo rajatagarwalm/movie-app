@@ -1,7 +1,7 @@
 $(document).ready(function(){
     var apiBaseURL = 'http://api.themoviedb.org/3/';
 	//var apiBaseURL = 'https://cors-anywhere.herokuapp.com/ ' + BaseURL;
-	var apiKey = '08becaadf9cd4cc9a2ceaf7a781a4136';
+	var apiKey = '86c5821412bd5387b74b1eb973076f7c';
 
 	// URL in Authentication. Base URL of image
 	var imageBaseUrl = 'https://image.tmdb.org/t/p/';
