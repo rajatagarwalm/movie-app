@@ -136,7 +136,7 @@ $(document).ready(function(){
 					var releaseDate = genreData.results[i].release_date;
 					var overview = genreData.results[i].overview;
 					var voteAverage = genreData.results[i].vote_average;				
-					var youtubeKey = movieKey.results[0].key;
+					var youtubeKey = movieKey.results[0].Key;
 					var youtubeLink = 'https://www.youtube.com/watch?v='+youtubeKey;
 					var genreHTML = '';
 					genreHTML += '<div class="col-sm-3 col-md-3 col-lg-3 eachMovie">';
