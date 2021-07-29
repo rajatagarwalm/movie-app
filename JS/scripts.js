@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    var apiBaseURL = 'http://api.themoviedb.org/3/';
+    var apiBaseURL = 'https://api.themoviedb.org/3/';
 	//var apiBaseURL = 'https://cors-anywhere.herokuapp.com/ ' + BaseURL;
 	var apiKey = '86c5821412bd5387b74b1eb973076f7c';
 
@@ -104,7 +104,7 @@ $(document).ready(function(){
 	//==============================================================================
 
 		// Check genreIDs and genre names: 
-		// http://api.themoviedb.org/3/movie/:movieID?api_key=<<>>
+		// https://api.themoviedb.org/3/movie/:movieID?api_key=<<>>
 					//28 = action
 					//12 = adventure
 					//16 = animation
@@ -336,3 +336,104 @@ $(document).ready(function(){
 		})
 	}
 });
+
+
+//.append(nowPlayingHTML) adds nowPlayingHTML to the present HTML
+//.html(nowPlayingHTML) ovwrwrites the HTML present with nowPlayingHTML. 
+//.html() is faster than DOM creation
+//.html() is good for when the element is empty. 
+//.append() is better when you want to add something dynamically, like adding a list item dynamically. (You would be adding a new string of HTML to the element.)
+
+
+	//==============================================================================
+	//====================== Get "top rated" data on default. ====================
+	//=================== Change results when a genre is clicked on.================
+	//==============================================================================
+	function gettopRatedData(){
+		const topratedURL = apiBaseURL + 'movie/top_rated?api_key=' + apiKey;
+		$.getJSON(topratedURL, function(topratedData){
+			// console.log(topratedData);
+			//we needed to add .results because topratedData is an array.
+			for(let i = 0; i<topratedData.results.length; i++){
+				// w300 is how wide it is
+				var mid = topratedData.results[i].id;
+				// mid = movie ID
+				var thisMovieUrl = apiBaseURL+'movie/'+mid+'/videos?api_key=' + apiKey;
+				// console.log(i)
+
+				$.getJSON(thisMovieUrl, function(movieKey){
+					// console.log(i);
+					// console.log(thisMovieUrl)
+					// console.log(movieKey)
+
+					//Need to go to that specific movie's URL to get the genres associated with it. (movieKey.id)
+					// var getGenreNameUrl = apiBaseURL + 'movie/' +movieKey.id+ '?api_key=' + apiKey;
+					// console.log(getGenreNameUrl);
+					// console.log(movieKey.id);
+
+					// $.getJSON(getGenreNameUrl, function(genreNames){
+					// 	// console.log(genreNames);//an object
+					// 	// console.log(genreNames.genres[0].name);
+
+					// 	for (let j=0; j<genreNames.genres.length; j++){
+					// 		var genre = genreNames.genres[0].name;
+					// 		// console.log(genre);
+					// 	}
+					// })
+
+					var poster = imageBaseUrl+'w300'+topratedData.results[i].poster_path;
+					// console.log(poster);
+
+					var title = topratedData.results[i].original_title;
+
+					var releaseDate = topratedData.results[i].release_date;
+
+					var overview = topratedData.results[i].overview;
+					// $('.overview').addClass('overview');
+
+					var voteAverage = topratedData.results[i].vote_average;				
+					// console.log(movieKey)
+					var youtubeKey = movieKey.results[0].key;
+
+					var youtubeLink = 'https://www.youtube.com/watch?v='+youtubeKey;
+					// console.log(youtubeLink)
+
+					var topratedHTML = '';
+					// added in i to nowPlayingHTML. Without it, only the details for the first movie in the results display in the modal no matter which movie poster you click on.
+					topratedHTML += '<div class="col-sm-3 eachMovie">';
+					topratedHTML += '<button type="button" class="btnModal" data-toggle="modal" data-target="#exampleModal'+ i + '" data-whatever="@' + i + '">'+'<img src="'+poster+'"></button>'; 	
+					topratedHTML += '<div class="modal fade" id="exampleModal' + i +'" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">';
+					topratedHTML += '<div class="modal-dialog" role="document">';
+					topratedHTML += '<div class="modal-content col-sm-12">';
+					topratedHTML += '<div class="col-sm-6 moviePosterInModal">';
+					topratedHTML += '<a href="'+youtubeLink+'"><img src="'+poster+'"></a>'; 
+					topratedHTML += '</div><br>';//close trailerLink
+					topratedHTML += '<div class="col-sm-6 movieDetails">';
+					topratedHTML += '<div class="movieName">'+title+'</div><br>';
+					topratedHTML += '<div class="linkToTrailer"><a href="'+youtubeLink+'"><span class="glyphicon glyphicon-play"></span>&nbspPlay trailer</a>' + '</div><br>';	
+					topratedHTML += '<div class="release">Release Date: '+releaseDate+'</div><br>';
+										// nowPlayingHTML += '<div class="genre">Genre: '+genre+'</div><br>';
+										topratedHTML += '<div class="overview">' +overview+ '</div><br>';// Put overview in a separate div to make it easier to style
+										topratedHTML += '<div class="rating">Rating: '+voteAverage+ '/10</div><br>';
+										topratedHTML += '<div class="col-sm-3 btn btn-primary">8:30 AM' + '</div>';
+										topratedHTML += '<div class="col-sm-3 btn btn-primary">10:00 AM' + '</div>';
+										topratedHTML += '<div class="col-sm-3 btn btn-primary">12:30 PM' + '</div>';
+										topratedHTML += '<div class="col-sm-3 btn btn-primary">3:00 PM' + '</div>';
+										topratedHTML += '<div class="col-sm-3 btn btn-primary">4:10 PM' + '</div>';
+										topratedHTML += '<div class="col-sm-3 btn btn-primary">5:30 PM' + '</div>';
+										topratedHTML += '<div class="col-sm-3 btn btn-primary">8:00 PM' + '</div>';
+										topratedHTML += '<div class="col-sm-3 btn btn-primary">10:30 PM' + '</div>';
+										topratedHTML += '</div>'; //close movieDetails
+										topratedHTML += '</div>'; //close modal-content
+										topratedHTML += '</div>'; //close modal-dialog
+										topratedHTML += '</div>'; //close modal
+										topratedHTML += '</div>'; //close off each div
+
+					$('#movie-grid').append(topratedHTML);
+					//Without this line, there is nowhere for the posters and overviews to display so it doesn't show up 
+					$('#movieGenreLabel').html("Top Rated");
+					//h1 will change depending on what is clicked. Will display "toprated" in this case.
+				})
+			}
+		}) 
+	}
